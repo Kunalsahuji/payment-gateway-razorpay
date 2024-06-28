@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment-Gateway</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="icon" type="image/x-icon"
+    href="https://imgs.search.brave.com/f_-Ilj8fXjJR_bG5OvopUMreygKLg3Lq-XgoM-eauH8/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy9i/L2IzL1Jhem9ycGF5/X2xvZ28ud2VicA">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+
+</head>
+
+<body class="bg-gray-700">
+  <div>
+    <div class="w-full m-auto ">
+      <h1 class="w-[25%] m-auto border border-zinc-500 rounded-md  text-2xl text-center bg-gray-200 mt-[-2%] p-3 mb-8">
+        Checkout
+        Page
+      </h1>
+    </div>
+    <div class="flex flex-col items-center w-[55%] h-[65%] m-auto bg-gray-200 rounded-2xl border border-zinc-500">
+      <img
+        class="w-[50%] h-[45%] m-auto object-cover rounded-2xl border border-zinc-500 hover:scale-105 transition-all mt-5"
+        src="https://images.drivespark.com/webp/600x400/ph-big/2024/05/ducati-monster-senna_1716030911150.jpg"
+        alt="img-1">
+      <h1
+        class="text-2xl rounded-3xl px-6 py-2 border border-zinc-500 mt-5 hover:bg-zinc-900 hover:text-white transition-all">
+        ₹4,99,999
+      </h1>
+      <button id="rzp-button1"
+        class="text-2xl rounded-3xl px-5 py-3 border border-zinc-500 bg-purple-400 text-white mt-5 mb-5 hover:animate-pulse hover:text-zinc-900">
+        Buy Now</button>
+    </div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  </div>
+
+  <script>
+    var orderId;
+    $(document).ready(function () {
+      var settings = {
+        "url": "/create/orderId",
+        "method": "POST",
+        "timeout": 0,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "data": JSON.stringify({
+          "amount": "499999 "
+        }),
+      };
+
+      //creates new orderId everytime
+      $.ajax(settings).done(function (response) {
+
+        orderId = response.orderid;
+        console.log(orderId);
+        $("button").show();
+      });
+    });
+
+
+
+    var options = {
+    "key": "YOUR_KEY_ID", // Enter the Key ID generated from the Dashboard
+    "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Acme Corp",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": "order_IluGWxBm9U8zJ8", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+  </script>
+</body>
+
+</html>
